@@ -1,7 +1,8 @@
 # import necessary libraries
 import streamlit as st
 import pandas as pd
-from sklearn.ensemble import RandomForestRegressor  # You can replace this with your preferred ML model
+from sklearn.ensemble import RandomForestRegressor
+from fastapi import FastAPI
 
 # Create a simple RandomForestRegressor model (you can replace it with your own model)
 model = RandomForestRegressor()
@@ -21,13 +22,11 @@ def main():
     overs = st.sidebar.slider("Overs", 0.0, 50.0, 10.0)
     wickets = st.sidebar.slider("Wickets", 0, 10, 2)
     runs = st.sidebar.slider("Runs", 0, 300, 150)
-    # You can add more input features as needed
 
     features = {
         'overs': overs,
         'wickets': wickets,
         'runs': runs,
-        # Add more features as needed
     }
 
     # Predict runs
@@ -36,6 +35,15 @@ def main():
     # Display the prediction
     st.write(f"Predicted Runs: {predicted_runs}")
 
-# Run the app
+# FastAPI app
+app = FastAPI()
+
+# Endpoint for prediction
+@app.post("/predict")
+def predict(features: dict):
+    predicted_runs = predict_runs(features)
+    return {"predicted_runs": predicted_runs}
+
+# Run the Streamlit app
 if __name__ == "__main__":
     main()
